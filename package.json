@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://RedRoll.github.io/dream-places",
+  "homepage": "https://redroll.github.io/dream-places",
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
