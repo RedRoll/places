@@ -14,7 +14,9 @@ export const PlaceContext = createContext({
     currentTitle: ''
 })
 
-const copiedPlaces = structuredClone(AVAILABLE_PLACES)
+
+
+
 
 
 const placesReducer = (state, action) => {
@@ -23,27 +25,28 @@ const placesReducer = (state, action) => {
 
     if (action.type === 'UPDATE_PLACES') {
 
-        const storedPlaces = JSON.parse(localStorage.getItem('selectedPlaces'))
+        // const storedPlaces = JSON.parse(localStorage.getItem('selectedPlaces'))
 
-        if (storedPlaces <= 0) {
-            localStorage.setItem('selectedPlaces', JSON.stringify([selectedPlace]))
-        }
-        else if (storedPlaces.length > 0) {
-            if (!storedPlaces.some(item => item.id === selectedPlace.id)) {
-                localStorage.setItem('selectedPlaces', JSON.stringify([selectedPlace, ...storedPlaces]))
-            }
-        }
-
+        // if (storedPlaces <= 0) {
+        //     localStorage.setItem('selectedPlaces', JSON.stringify([selectedPlace]))
+        // }
+        // else if (storedPlaces.length > 0) {
+        //     if (!storedPlaces.some(item => item.id === selectedPlace.id)) {
+        //         localStorage.setItem('selectedPlaces', JSON.stringify([selectedPlace, ...storedPlaces]))
+        //     }
+        // }
 
         return {
             ...state,
 
-            addedPlaces: [
+            // addedPlaces: [
 
-                // ...selectedPlace // додає всі ключі з вибраного об`єкту
-                ...JSON.parse(localStorage.getItem('selectedPlaces'))
+            //     {...selectedPlace }// додає всі ключі з вибраного об`єкту
+            //     // ...JSON.parse(localStorage.getItem('selectedPlaces'))
 
-            ],
+            // ],
+
+            addedPlaces: [selectedPlace, ...state.addedPlaces], // закінчив тут, не можу передекларувати змінні початкового стану(перед цим був локал страдж, зараз хочу перейти просто на js логіку без локалсторадж)
             availablePlaces: state.availablePlaces.filter(object => object.title != action.payload)
         }
 
@@ -53,12 +56,12 @@ const placesReducer = (state, action) => {
 
     if (action.type === 'DELETE_PLACE') {
 
-        const storedPlaces = JSON.parse(localStorage.getItem('selectedPlaces'))
+        // const storedPlaces = JSON.parse(localStorage.getItem('selectedPlaces'))
 
-        const updatedPlaces = storedPlaces.filter(item => item.title != action.payload) // видалення елементу також з localStorage
+        // const updatedPlaces = storedPlaces.filter(item => item.title != action.payload) // видалення елементу також з localStorage
 
 
-        localStorage.setItem('selectedPlaces', JSON.stringify([...updatedPlaces])) // декларування оновленого масиву даних в localStorage
+        // localStorage.setItem('selectedPlaces', JSON.stringify([...updatedPlaces])) // декларування оновленого масиву даних в localStorage
 
         return {
             ...state,
@@ -99,39 +102,65 @@ const PlaceContextProvider = ({ children }) => {
     const [places, placesDispatch] = useReducer(placesReducer, {
 
         addedPlaces: null,
-        availablePlaces: null, 
+        availablePlaces: null,
         currentTitle: ''
     })
 
+    console.log(places.addedPlaces)
+    console.log(places.availablePlaces)
 
     const createInitialArray = () => {
 
         // navigator - встроєний метод браузера, який визначає місцезнаходження користувача (питає в користувача дозвіл на визначення геолокації)
 
-        const storedSelectedPlaces = JSON.parse(localStorage.getItem('selectedPlaces'))
+        // const storedSelectedPlaces = JSON.parse(localStorage.getItem('selectedPlaces'))
 
 
-        let updatedArray
+        // let updatedArray
 
-        if (storedSelectedPlaces === null) {
-            updatedArray = copiedPlaces
-        }
-        else if (storedSelectedPlaces) {
-            updatedArray = copiedPlaces.filter( item => !storedSelectedPlaces.some( storedItem =>  storedItem.id === item.id) )
-        }
-         // filter() створює новий масив даних зі всіма елементами, які пройшли перевірку
+        // if (storedSelectedPlaces === null) {
+        //     updatedArray = copiedPlaces
+        // }
+        // else if (storedSelectedPlaces) {
+        //     updatedArray = copiedPlaces.filter( item => !storedSelectedPlaces.some( storedItem =>  storedItem.id === item.id) )
+        // }
+        // filter() створює новий масив даних зі всіма елементами, які пройшли перевірку
         // some() перевіряє чи кожний елемент масиву проходить первірку, яка задана в функції
         // ! оператор зімнює результат some() на протилежний, тобто, якщо item.id === sorteditem.id some() видасть true, але тоді даний item потрапить до новго масиву, що не потрібно. Для того значення і інвертується
 
+        const copiedPlaces = structuredClone(AVAILABLE_PLACES)
+
+        let twoRandomInitilaPlaces = []
+
+        // let updatedArrayOfPlaces
+
+        for (let i = 0; i < 2; i++) {
+
+            const random = Math.floor(Math.random() * copiedPlaces.length)
+
+            twoRandomInitilaPlaces.push(copiedPlaces[random])
+
+            // copiedPlaces = copiedPlaces.filter( item => item.title != copiedPlaces[random].title)
+            copiedPlaces.splice(random, 1) // видаляє 1 елемент на місці random
+
+        }
+
+        console.log(twoRandomInitilaPlaces)
+        console.log(copiedPlaces)
+
 
         navigator.geolocation.getCurrentPosition(position => { // position - об`єкт який повертає метод navigator (в ньому мітяться дані, які стосуються місцезнаходження користувача)
-            const sortedPlaces = sortPlacesByDistance(updatedArray, position.coords.latitude, position.coords.longitude)
+
+            // const sortedPlaces = sortPlacesByDistance(updatedArray, position.coords.latitude, position.coords.longitude)
+            const sortedPlaces = sortPlacesByDistance(copiedPlaces, position.coords.latitude, position.coords.longitude)
+
 
             placesDispatch({
                 type: 'CREATE_ARRAY',
                 payload: {
                     available: sortedPlaces.map(obj => ({ ...obj })), // глибоке копіювання об`єктів в масив,
-                    added: storedSelectedPlaces ? [...storedSelectedPlaces] : undefined
+                    // added: storedSelectedPlaces ? [...storedSelectedPlaces] : undefined
+                    added: twoRandomInitilaPlaces
 
                 }
 
