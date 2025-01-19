@@ -175,9 +175,10 @@ const PlaceContextProvider = ({ children }) => {
 
     useEffect(() => {
 
-        setTimeout(() => {
-            createInitialArray() // Функція в середині useEffect буде виконана після повного рендеру jsx-коду
-        }, 1000)
+        // setTimeout(() => {
+        //     createInitialArray() // Функція в середині useEffect буде виконана після повного рендеру jsx-коду
+        // }, 1000)
+        createInitialArray()
 
     }, [])
 
