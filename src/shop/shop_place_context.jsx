@@ -101,8 +101,8 @@ const PlaceContextProvider = ({ children }) => {
 
     const [places, placesDispatch] = useReducer(placesReducer, {
 
-        addedPlaces: null,
-        availablePlaces: null,
+        addedPlaces: undefined,
+        availablePlaces: undefined,
         currentTitle: ''
     })
 
