@@ -87,7 +87,8 @@ const placesReducer = (state, action) => {
         return {
             ...state,
             addedPlaces: action.payload.added,
-            availablePlaces: action.payload.available
+            availablePlaces: action.payload.available,
+            reRender: action.payload.render
         }
     }
 
@@ -101,8 +102,8 @@ const PlaceContextProvider = ({ children }) => {
 
     const [places, placesDispatch] = useReducer(placesReducer, {
 
-        addedPlaces: undefined,
-        availablePlaces: undefined,
+        addedPlaces: null,
+        availablePlaces: null,
         currentTitle: ''
     })
 
@@ -175,10 +176,12 @@ const PlaceContextProvider = ({ children }) => {
 
     useEffect(() => {
 
-        // setTimeout(() => {
-        //     createInitialArray() // Функція в середині useEffect буде виконана після повного рендеру jsx-коду
-        // }, 1000)
-        createInitialArray()
+        setTimeout(() => {
+
+            createInitialArray() // Функція в середині useEffect буде виконана після повного рендеру jsx-коду
+            
+        }, 1000)
+       
 
     }, [])
 
