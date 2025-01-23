@@ -16,7 +16,7 @@ const PlacesContent = ({ places, click, title, modalAction }) => {
 
                 :
 
-                places === undefined || places.length === 0 ? (<p className="text-white">No added places yet...</p>)
+               places.length === 0 ? (<p className="text-white">No added places yet...</p>)
 
                     // після затримки в 2с, (useEffect в shop запускає функцію створювання даних через 2 с від початку рендеру) якщо addedplaces буде null - змінити loading на 'місць ще не додано'
                     :
