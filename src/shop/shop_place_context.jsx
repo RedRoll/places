@@ -23,32 +23,37 @@ const initialArray = AVAILABLE_PLACES.filter(item => !storedSelectedPlaces.some(
 
 const placesReducer = (state, action) => {
 
+    // action.payload відповідає актуальному placesDispatch(залежить від action.type), який був задіяний в даний момент
+
     const selectedPlace = AVAILABLE_PLACES.find(object => object.title === action.payload) // повертає перший знайдений об`єкт по критерію пошуку
+
+    const storedPlaces = JSON.parse(localStorage.getItem('selectedPlaces')) || [] // распакоука з локалсторадж актуальних даних 
+    // оператор 'або' викристовуєься для випадку, коли localStorage === null, тоді повернеться путсий масив
 
     if (action.type === 'UPDATE_PLACES') {
 
-        const storedPlaces = JSON.parse(localStorage.getItem('selectedPlaces'))
-
         if (storedPlaces === null || storedPlaces.length <= 0) {
-            localStorage.setItem('selectedPlaces', JSON.stringify([selectedPlace]))
+
+            storedPlaces.push(selectedPlace)
+
         }
         else if (storedPlaces.length > 0) {
             if (!storedPlaces.some(item => item.id === selectedPlace.id)) {
-                localStorage.setItem('selectedPlaces', JSON.stringify([selectedPlace, ...storedPlaces]))
+
+                storedPlaces.push(selectedPlace)
                 // some() перевіряє чи кожний елемент масиву проходить перевірку, яка задана в функції
-                // ! оператор зімнює результат some() на протилежний, тобто, якщо item.id === sorteditem.id some() видасть true, але тоді даний item потрапить до новго масиву, що не потрібно. Для того значення і інвертується
+                // ! оператор зімнює результат some() на протилежний.
             }
         }
 
-
+        localStorage.setItem('selectedPlaces', JSON.stringify([...storedPlaces]))
 
         return {
             ...state,
 
             addedPlaces: [
 
-
-                ...JSON.parse(localStorage.getItem('selectedPlaces'))// додавання елментів з localStorage
+                ...storedPlaces// додавання елeментів з localStorage
 
             ],
 
@@ -62,7 +67,7 @@ const placesReducer = (state, action) => {
 
     if (action.type === 'DELETE_PLACE') {
 
-        const storedPlaces = JSON.parse(localStorage.getItem('selectedPlaces'))
+
 
         const updatedPlaces = storedPlaces.filter(item => item.title != action.payload) // видалення елементу також з localStorage
 
@@ -72,7 +77,7 @@ const placesReducer = (state, action) => {
         return {
             ...state,
             // addedPlaces: state.addedPlaces.length >= 0 ? state.addedPlaces.filter(object => object.title != action.payload) : null,
-            addedPlaces: JSON.parse(localStorage.getItem('selectedPlaces')),
+            addedPlaces: updatedPlaces,
             // не апдейтило addedPlaces, коли ...state був під addedPlaces.
 
             availablePlaces: [
@@ -86,14 +91,13 @@ const placesReducer = (state, action) => {
     if (action.type === 'UPDATE_TITLE') {
         return {
             ...state,
-            currentTitle: action.payload
+            currentTitle: action.payload // 
         }
     }
 
     if (action.type === 'CREATE_ARRAY') {
         return {
             ...state,
-            // addedPlaces: action.payload.added,
             availablePlaces: action.payload.available
         }
     }
@@ -112,8 +116,7 @@ const PlaceContextProvider = ({ children }) => {
         currentTitle: ''
     })
 
-    console.log(places.addedPlaces)
-    console.log(places.availablePlaces)
+
 
     const createInitialArray = () => {
 
@@ -122,7 +125,7 @@ const PlaceContextProvider = ({ children }) => {
 
         navigator.geolocation.getCurrentPosition(position => { // position - об`єкт який повертає метод navigator (в ньому мітяться дані, які стосуються місцезнаходження користувача)
 
-           
+
             const sortedPlaces = sortPlacesByDistance(initialArray, position.coords.latitude, position.coords.longitude)
 
 
