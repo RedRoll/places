@@ -7,8 +7,7 @@ const PlacesContent = ({ places, click, title, modalAction }) => {
     return (
         <>
             <h3 className="text-customBlue">{title}</h3>
-            {/* <div className="grid grid-cols-4 gap-3">{places.map(item => (<CardPlace modalAction={modalAction} key={item.id} img={item.image.src} alt={item.image.alt} title={item.title} click={click} />))}</div> */}
-
+          
             {places === null ? 
             (
                 <h3 className="text-white text-lg uppercase font medium text-center mb-5">Loading...</h3>
@@ -24,7 +23,7 @@ const PlacesContent = ({ places, click, title, modalAction }) => {
                         <div className="grid lg:grid-cols-4 md:grid-cols-3 min-[320px]:grid-cols-2 gap-3  ">{places.map(item =>
 
                         (<CardPlace
-                            modalAction={modalAction}
+                            modalAction={() => modalAction(true)}
                             key={item.id}
                             img={item.image.src}
                             alt={item.image.alt}

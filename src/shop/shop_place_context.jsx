@@ -16,7 +16,7 @@ export const PlaceContext = createContext({
 
 
 
-const storedSelectedPlaces = JSON.parse(localStorage.getItem('selectedPlaces')) || []
+const storedSelectedPlaces = JSON.parse(localStorage.getItem('selectedPlaces')) || [] // виконується один раз - при першому рендері
 
 const initialArray = AVAILABLE_PLACES.filter(item => !storedSelectedPlaces.some(storedItem => storedItem.id === item.id))
 
@@ -27,8 +27,11 @@ const placesReducer = (state, action) => {
 
     const selectedPlace = AVAILABLE_PLACES.find(object => object.title === action.payload) // повертає перший знайдений об`єкт по критерію пошуку
 
+    // виконується кожен раз, коли запускається один зі сценаріїв placesDispath
     const storedPlaces = JSON.parse(localStorage.getItem('selectedPlaces')) || [] // распакоука з локалсторадж актуальних даних 
     // оператор 'або' викристовуєься для випадку, коли localStorage === null, тоді повернеться путсий масив
+
+    
 
     if (action.type === 'UPDATE_PLACES') {
 
@@ -41,7 +44,8 @@ const placesReducer = (state, action) => {
             if (!storedPlaces.some(item => item.id === selectedPlace.id)) {
 
                 storedPlaces.push(selectedPlace)
-                // some() перевіряє чи кожний елемент масиву проходить перевірку, яка задана в функції
+                // some() перевіряє чи кожний елемент масиву проходить перевірку, яка задана в функції, якщо хоча б один елемент проходить первірку .some() повертає true, якщо ні - false
+
                 // ! оператор зімнює результат some() на протилежний.
             }
         }
@@ -51,11 +55,7 @@ const placesReducer = (state, action) => {
         return {
             ...state,
 
-            addedPlaces: [
-
-                ...storedPlaces// додавання елeментів з localStorage
-
-            ],
+            addedPlaces: storedPlaces,
 
             availablePlaces: state.availablePlaces.filter(object => object.title != action.payload)
             // filter() створює новий масив даних зі всіма елементами, які пройшли перевірку
@@ -98,7 +98,7 @@ const placesReducer = (state, action) => {
     if (action.type === 'CREATE_ARRAY') {
         return {
             ...state,
-            availablePlaces: action.payload.available
+            availablePlaces: action.payload
         }
     }
 
@@ -111,7 +111,7 @@ const PlaceContextProvider = ({ children }) => {
 
     const [places, placesDispatch] = useReducer(placesReducer, {
 
-        addedPlaces: JSON.parse(localStorage.getItem('selectedPlaces')),
+        addedPlaces: storedSelectedPlaces,
         availablePlaces: null,
         currentTitle: ''
     })
@@ -131,12 +131,7 @@ const PlaceContextProvider = ({ children }) => {
 
             placesDispatch({
                 type: 'CREATE_ARRAY',
-                payload: {
-                    available: sortedPlaces.map(obj => ({ ...obj })) // глибоке копіювання об`єктів в масив,
-                    // added: storedSelectedPlaces ? [...storedSelectedPlaces] : undefined
-
-
-                }
+                payload: sortedPlaces.map(obj => ({ ...obj })) // глибоке копіювання об`єктів в масив,
 
             })
 
@@ -196,5 +191,3 @@ const PlaceContextProvider = ({ children }) => {
 }
 
 export default PlaceContextProvider
-
-// так багато інфи, що я б розділив це на 2 компоненти, сортуючи дані по відповідності
