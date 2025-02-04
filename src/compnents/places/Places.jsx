@@ -12,8 +12,6 @@ const Places = ({ }) => {
     
     const { availablePlaces, addedPlaces} = useContext(PlaceContext)
 
-    // const action = () => setModalIsOpen(true)
-
     return (
         <div className="flex flex-col gap-y-8">
             <PlacesContent title='My wish places.'  modalAction={setModalIsOpen} places={addedPlaces} />

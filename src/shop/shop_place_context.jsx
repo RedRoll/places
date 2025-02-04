@@ -74,6 +74,8 @@ const placesReducer = (state, action) => {
 
         localStorage.setItem('selectedPlaces', JSON.stringify([...updatedPlaces])) // декларування оновленого масиву даних в localStorage
 
+
+
         return {
             ...state,
             // addedPlaces: state.addedPlaces.length >= 0 ? state.addedPlaces.filter(object => object.title != action.payload) : null,
@@ -83,7 +85,8 @@ const placesReducer = (state, action) => {
             availablePlaces: [
                 ...state.availablePlaces,
                 { ...selectedPlace }
-            ]
+            ],
+            modal: false
         }
 
     }
@@ -113,7 +116,8 @@ const PlaceContextProvider = ({ children }) => {
 
         addedPlaces: storedSelectedPlaces,
         availablePlaces: null,
-        currentTitle: ''
+        currentTitle: '',
+        modal: false
     })
 
 
