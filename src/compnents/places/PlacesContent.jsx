@@ -20,7 +20,7 @@ const PlacesContent = ({ places, click, title, modalAction }) => {
                     // після затримки в 2с, (useEffect в shop запускає функцію створювання даних через 2 с від початку рендеру) якщо addedplaces буде null - змінити loading на 'місць ще не додано'
                     :
                     (
-                        <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 gap-10 sm:gap-3  ">{places.map(item =>
+                        <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 gap-8 sm:gap-3  ">{places.map(item =>
 
                         (<CardPlace
                             modalAction={() => modalAction(true)}
