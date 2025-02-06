@@ -1,14 +1,16 @@
-import { useRef, useContext, useEffect, useState } from "react"
+import { useRef, useContext, useEffect } from "react"
 
 import { createPortal } from "react-dom"
 
 import { PlaceContext } from "../../shop/shop_place_context"
 
+import ProgressBar from "./ProgressBar"
+
 const TIMER = 3000
 
 const DialogAllert = ({ modalState, modalAction }) => {
 
-    const [remainingTime, setRemainingTime] = useState(TIMER)
+    // const [remainingTime, setRemainingTime] = useState(TIMER)
 
     const { onPlaceDelete } = useContext(PlaceContext)
 
@@ -21,24 +23,15 @@ const DialogAllert = ({ modalState, modalAction }) => {
 
             // setTimeout/setInterval теж є sideEffect, як useEffect
 
-            const timer = setTimeout(() => { 
+            const timer = setTimeout(() => { // для закриття вікна
                 console.log('timer set')
                 modalAction(() => false)
                 onPlaceDelete()
             }, TIMER)
 
-            const interval = setInterval(() => {
-
-                console.log('- 10')
-                setRemainingTime(prevState => prevState - 10)
-
-            }, 10);
-
             return () => {
                 console.log('cleaning timer')
                 clearTimeout(timer)
-                clearInterval(interval)
-                setRemainingTime(TIMER)
             }
             // return це функція, яка 'прибирає/чистить' в середині useEffect. Вона запускається коли залежність(modalState) змінюється(відразу перед тим, як новий ефект буде перезапущений). Також вона запускається, коли компонент unmounts.
         }
@@ -85,7 +78,9 @@ const DialogAllert = ({ modalState, modalAction }) => {
                 <button className="bg-dark-dark1 py-1 px-3 rounded hover:bg-neutral-800 border border-customViolet" onClick={onOk}>OK</button>
                 <button className="bg-dark-dark1 py-1 px-3 rounded hover:bg-neutral-800 border border-customViolet" onClick={onCancel}>Cancel</button>
             </form>
-            <progress value={remainingTime} max={TIMER} />
+            <ProgressBar state={modalState} time={TIMER}/>
+
+            {/*Шкала, яка обчислюється для progress bar оновлюється дуже часто. І при кожному оновленні реакт перевиконує весь цей JSX код + інші функції, що з точки зору оптимізації не є правильним підходом. Щоб оптимізувати цей момент краще винести progress в окремий компонет. Тоді при обчислюванні шкали перевиконуватись буде тільки progress*/}
         </dialog>, document.getElementById('modal') 
 
     )

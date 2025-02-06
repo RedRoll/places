@@ -85,8 +85,7 @@ const placesReducer = (state, action) => {
             availablePlaces: [
                 ...state.availablePlaces,
                 { ...selectedPlace }
-            ],
-            modal: false
+            ]
         }
 
     }
@@ -116,8 +115,7 @@ const PlaceContextProvider = ({ children }) => {
 
         addedPlaces: storedSelectedPlaces,
         availablePlaces: null,
-        currentTitle: '',
-        modal: false
+        currentTitle: ''
     })
 
 
@@ -142,7 +140,7 @@ const PlaceContextProvider = ({ children }) => {
         })
     }
 
-    // useEffect приймає 2 аргументи. Перший - функція, яка буде виконуватись, другий - залежність (правило при якому перший аргумент (функція) буде виконуватись). Також useEffect не модна використовувати в середині функцій, умов(if else) і так далі.
+    // useEffect приймає 2 аргументи. Перший - функція, яка буде виконуватись, другий - залежність (правило при якому перший аргумент (функція) буде виконуватись). Також useEffect не можна використовувати в середині функцій, умов(if else) і так далі.
 
     // В загальному useEffect потрібний в випадку запобігання безкінечного ре-рендеру або коли потрібно виконати деякий код після основного рендеру jsx-коду
 
